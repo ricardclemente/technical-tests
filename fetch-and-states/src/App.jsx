@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 const ENDPOINT_RANDOM_FACT ='https://catfact.ninja/fact'
-const ENDPOINT_CAT_IMAGE ='/cat/:tag/says/${firstWord}?json=true'
 
 function App() {
   const [fact, setFact] = useState()
@@ -12,13 +11,18 @@ function App() {
     .then(answer => answer.json())
     .then(data => {
       setFact(data.fact)
-      const firstWord=data.fact.split(' ')[0]
       
-      fetch(`https://cataas.com/cat/says/${firstWord}?json=true`)
-      .then(answer=>answer.json())
-      .then(data => setImage(`https://cataas.com/${data.url}`))
     })
   },[])
+
+  useEffect(()=>{
+    if(!fact) return
+    const firstWord=fact.split(' ')[0]
+      
+    fetch(`https://cataas.com/cat/says/${firstWord}?json=true`)
+    .then(answer=>answer.json())
+    .then(data => setImage(`https://cataas.com/${data.url}`))
+  },[fact])
 
   return (
     <>
