@@ -1,33 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
 
+const ENDPOINT_RANDOM_FACT ='https://catfact.ninja/fact'
+const ENDPOINT_CAT_IMAGE ='/cat/:tag/says/${firstWord}?json=true'
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [fact, setFact] = useState()
+  const [image,setImage] = useState()
+  useEffect(()=>{
+    fetch(ENDPOINT_RANDOM_FACT)
+    .then(answer => answer.json())
+    .then(data => {
+      setFact(data.fact)
+      const firstWord=data.fact.split(' ')[0]
+      
+      fetch(`https://cataas.com/cat/says/${firstWord}?json=true`)
+      .then(answer=>answer.json())
+      .then(data => setImage(`https://cataas.com/${data.url}`))
+    })
+  },[])
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <main>
+        <h1>Cat App</h1>
+        <section>
+          {fact && <p>{fact}</p>}
+          {image && <img src={image} alt={`Image from cataas.com using the word ${fact}`}></img>}
+        </section>
+      </main>
+
+      
     </>
   )
 }
